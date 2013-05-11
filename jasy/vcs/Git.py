@@ -5,6 +5,7 @@
 
 import os.path, re, urllib.parse, shutil
 
+import jasy.core.Util as Util
 from jasy.core.Util import executeCommand
 import jasy.core.Console as Console
 
@@ -18,6 +19,12 @@ __gitSchemes = ('git', 'git+http', 'git+https', 'git+ssh', 'git+git', 'git+file'
 
 def update(url, version, path, update=True, submodules=True):
     """Clones the given repository URL (optionally with overriding/update features)"""
+
+
+    # Support for git reference setting
+    if type(url) is dict:
+        reference = Util.getKey(url, "reference")
+        url = Util.getKey(url, "url")        
 
     # Prepend git+ so that user knows that we identified the URL as git repository
     if not url.startswith("git+"):
@@ -139,6 +146,8 @@ def getBranch(path=None):
 def isUrl(url):
     """Figures out whether the given string is a valid Git repository URL"""
 
+    if type(url) is dict:
+        url = Util.getKey(url, "url")
     parsed = urllib.parse.urlparse(url)
 
     if not parsed.params and not parsed.query and not parsed.fragment:
