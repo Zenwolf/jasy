@@ -48,13 +48,13 @@ class OutputManager:
             self.__scriptFormatting.enable("comma")
 
 
-    def deployAssets(self, classes, assetFolder=None):
+    def deployAssets(self, classes, assetFolder=None, hashNames=False):
         """
         Deploys assets for the given classes and all their dependencies
 
         :param classes: List of classes to deploy assets for
         :type classes: list
-        :param assetFolder: Destination folder of assets (defaults to $prefix/asset)
+        :param assetFolder: Destination folder of assets (defaults to {{prefix}}/asset)
         :type assetFolder: string
         """
 
@@ -66,7 +66,7 @@ class OutputManager:
         for className in classes:
             resolver.addClassName(className)
 
-        self.__assetManager.deploy(resolver.getIncludedClasses(), assetFolder=assetFolder)
+        self.__assetManager.deploy(resolver.getIncludedClasses(), assetFolder=assetFolder, hashNames=hashNames)
 
         Console.outdent()
 
@@ -85,7 +85,7 @@ class OutputManager:
             bootClassItem = session.getVirtualItem("jasy.generated.BootCode", ClassItem, "(function(){%s})();" % bootCode, ".js")
             resolver.addClass(bootClassItem)
 
-        # 3. Check for usage assets
+        # 3. Check for asset usage
         includedClasses = resolver.getIncludedClasses()
         usesAssets = False
         for classItem in includedClasses:
@@ -93,7 +93,7 @@ class OutputManager:
                 usesAssets = True
                 break
 
-        # 4. Add asset data
+        # 4. Add asset data if needed
         if usesAssets:
             assetData = self.__assetManager.export(includedClasses)
             assetClassItem = session.getVirtualItem("jasy.generated.AssetData", ClassItem, "jasy.Asset.addData(%s);" % assetData, ".js")
