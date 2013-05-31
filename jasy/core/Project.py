@@ -1,6 +1,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2012-2013 Sebastian Werner
 #
 
 import os, re
@@ -529,6 +530,14 @@ class Project():
             relpath = os.path.normpath(prefix + relpath)
             
         return relpath.replace(os.sep, "/")
+
+    def getRevision(self):
+        """
+        Returns the current revision of the project
+        """
+
+        return Repository.getRevision(self.__path) or "unknown"
+
 
 
 
